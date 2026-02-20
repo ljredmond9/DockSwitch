@@ -3,7 +3,11 @@
     ".": {
       "release-type": "simple",
       "extra-files": [
-        "Sources/DockSwitch/Version.swift"
+        {
+          "type": "generic",
+          "path": "Sources/DockSwitch/Version.swift",
+          "glob": false
+        }
       ]
     }
   }
