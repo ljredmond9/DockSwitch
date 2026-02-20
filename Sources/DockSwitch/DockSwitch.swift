@@ -37,6 +37,13 @@ struct DockSwitch {
 
         monitor.start()
 
+        let shutdownHandler: @convention(c) (Int32) -> Void = { signal in
+            log("Shutting down (signal \(signal))")
+            exit(0)
+        }
+        signal(SIGTERM, shutdownHandler)
+        signal(SIGINT, shutdownHandler)
+
         log("Entering run loop")
         RunLoop.current.run()
     }

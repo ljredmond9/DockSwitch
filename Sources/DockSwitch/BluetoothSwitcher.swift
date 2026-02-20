@@ -19,12 +19,19 @@ struct BluetoothSwitcher {
     }
 
     /// Display connected — this Mac is gaining the peripherals.
-    /// Unpair (clear stale record), pair, then connect with retries.
+    /// Skip devices already connected; unpair (clear stale record), pair, then connect with retries for the rest.
     func pairAndConnect() {
         for mac in peripheralMACs {
+            if isConnected(mac) {
+                log("\(mac) already connected — skipping")
+                continue
+            }
+
             log("Pairing \(mac)...")
             blueutil("--unpair", mac)
-            blueutil("--pair", mac)
+            Thread.sleep(forTimeInterval: 1.0)
+            blueutil("--pair", mac, "0000")
+            Thread.sleep(forTimeInterval: 1.0)
 
             var connected = false
             for attempt in 1...maxRetries {
@@ -41,6 +48,26 @@ struct BluetoothSwitcher {
                 log("ERROR: Failed to connect \(mac) after \(maxRetries) attempts")
             }
         }
+    }
+
+    private func isConnected(_ mac: String) -> Bool {
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: bleutilPath)
+        process.arguments = ["--is-connected", mac]
+
+        let pipe = Pipe()
+        process.standardOutput = pipe
+        process.standardError = pipe
+
+        do {
+            try process.run()
+            process.waitUntilExit()
+        } catch {
+            return false
+        }
+
+        let output = String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        return output == "1"
     }
 
     /// Display disconnected — this Mac is losing the peripherals.
@@ -71,9 +98,8 @@ struct BluetoothSwitcher {
         }
 
         let output = String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-        if !output.isEmpty {
-            log("blueutil \(args.joined(separator: " ")): \(output)")
-        }
+        let status = process.terminationStatus
+        log("blueutil \(args.joined(separator: " ")): exit=\(status)\(output.isEmpty ? "" : " output=\(output)")")
 
         return process.terminationStatus
     }

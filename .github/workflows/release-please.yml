@@ -35,10 +35,11 @@ jobs:
       - name: Build universal binary
         run: swift build -c release --arch arm64 --arch x86_64
 
-      - name: Prepare artifact
+      - name: Prepare and sign artifact
         run: |
           cp "$(swift build -c release --show-bin-path --arch arm64 --arch x86_64)/DockSwitch" dockswitch-macos-universal
           chmod +x dockswitch-macos-universal
+          codesign --sign - --entitlements entitlements.plist --force dockswitch-macos-universal
 
       - name: Upload to release
         env:

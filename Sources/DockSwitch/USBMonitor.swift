@@ -95,12 +95,17 @@ private func deviceAttached(refcon: UnsafeMutableRawPointer?, iterator: io_itera
     guard let refcon else { return }
     let monitor = Unmanaged<USBMonitor>.fromOpaque(refcon).takeUnretainedValue()
 
-    // Drain the iterator (required to re-arm the notification)
+    // Drain the iterator (required to re-arm the notification).
+    // Count matches so we only fire the callback once regardless of
+    // how many USB interfaces the device exposes.
+    var count = 0
     while case let service = IOIteratorNext(iterator), service != 0 {
         IOObjectRelease(service)
+        count += 1
     }
 
-    log("Dock connected")
+    guard count > 0 else { return }
+    log("Dock connected (\(count) USB interface(s))")
     monitor.onDockConnected?()
 }
 
@@ -108,10 +113,13 @@ private func deviceRemoved(refcon: UnsafeMutableRawPointer?, iterator: io_iterat
     guard let refcon else { return }
     let monitor = Unmanaged<USBMonitor>.fromOpaque(refcon).takeUnretainedValue()
 
+    var count = 0
     while case let service = IOIteratorNext(iterator), service != 0 {
         IOObjectRelease(service)
+        count += 1
     }
 
-    log("Dock disconnected")
+    guard count > 0 else { return }
+    log("Dock disconnected (\(count) USB interface(s))")
     monitor.onDockDisconnected?()
 }
