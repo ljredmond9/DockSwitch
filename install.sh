@@ -52,10 +52,10 @@ else
     echo "Apple Studio Display defaults: vendorID=1452 productID=4372"
     echo ""
 
-    read -rp "Dock vendor ID [1452]: " VENDOR_ID
+    read -rp "Dock vendor ID [1452]: " VENDOR_ID < /dev/tty
     VENDOR_ID="${VENDOR_ID:-1452}"
 
-    read -rp "Dock product ID [4372]: " PRODUCT_ID
+    read -rp "Dock product ID [4372]: " PRODUCT_ID < /dev/tty
     PRODUCT_ID="${PRODUCT_ID:-4372}"
 
     echo ""
@@ -66,7 +66,7 @@ else
 
     PERIPHERAL_MACS=()
     while true; do
-        read -rp "Peripheral MAC address (or empty to finish): " MAC
+        read -rp "Peripheral MAC address (or empty to finish): " MAC < /dev/tty
         [ -z "$MAC" ] && break
         PERIPHERAL_MACS+=("$MAC")
     done
@@ -83,7 +83,7 @@ else
     echo "  Peripherals:  ${PERIPHERAL_MACS[*]}"
     echo "  blueutil:     $BLUEUTIL_PATH"
     echo ""
-    read -rp "Proceed with install? [Y/n]: " CONFIRM
+    read -rp "Proceed with install? [Y/n]: " CONFIRM < /dev/tty
     CONFIRM="${CONFIRM:-Y}"
     if [[ ! "$CONFIRM" =~ ^[Yy]$ ]]; then
         echo "Aborted."
