@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/ljredmond9/DockSwitch/compare/v0.2.0...v0.2.1) (2026-02-20)
+
+
+### Bug Fixes
+
+* move build job into release-please workflow ([378e2b2](https://github.com/ljredmond9/DockSwitch/commit/378e2b233d077168402e0f270a6fbbfb393266eb))
+
 ## [0.2.0](https://github.com/ljredmond9/DockSwitch/compare/v0.1.0...v0.2.0) (2026-02-20)
 
 
