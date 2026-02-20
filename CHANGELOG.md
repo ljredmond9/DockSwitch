@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.2.4](https://github.com/ljredmond9/DockSwitch/compare/v0.2.3...v0.2.4) (2026-02-20)
+
+
+### Bug Fixes
+
+* Bluetooth entitlement, duplicate events, pairing reliability ([acfe104](https://github.com/ljredmond9/DockSwitch/commit/acfe104a60f1b0363f18cf39b38d392851b2c96a))
+* read user input from /dev/tty in installer ([667f55b](https://github.com/ljredmond9/DockSwitch/commit/667f55b92d80b52557c3891d0da597651cef8330))
+* wrap installer in main() for curl-pipe-bash compatibility ([f3a3a51](https://github.com/ljredmond9/DockSwitch/commit/f3a3a51e60326f315a3164374914fdfeacfc3b08))
+
 ## [0.2.3](https://github.com/ljredmond9/DockSwitch/compare/v0.2.2...v0.2.3) (2026-02-20)
 
 
