@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2](https://github.com/ljredmond9/DockSwitch/compare/v0.2.1...v0.2.2) (2026-02-20)
+
+
+### Bug Fixes
+
+* use swift-actions/setup-swift for consistent Swift 6.2 in CI ([ec34374](https://github.com/ljredmond9/DockSwitch/commit/ec34374d2dd282c9fc8dcbb2304f020da08bbe3d))
+
 ## [0.2.1](https://github.com/ljredmond9/DockSwitch/compare/v0.2.0...v0.2.1) (2026-02-20)
 
 
