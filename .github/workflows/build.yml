@@ -1,0 +1,27 @@
+name: Build & Upload Binary
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build universal binary
+        run: swift build -c release --arch arm64 --arch x86_64
+
+      - name: Prepare artifact
+        run: |
+          cp "$(swift build -c release --show-bin-path --arch arm64 --arch x86_64)/DockSwitch" dockswitch-macos-universal
+          chmod +x dockswitch-macos-universal
+
+      - name: Upload to release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release upload "${{ github.event.release.tag_name }}" dockswitch-macos-universal
