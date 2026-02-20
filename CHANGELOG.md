@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.3](https://github.com/ljredmond9/DockSwitch/compare/v0.2.2...v0.2.3) (2026-02-20)
+
+
+### Bug Fixes
+
+* add x-release-please-version marker so version gets bumped ([34efe0f](https://github.com/ljredmond9/DockSwitch/commit/34efe0f5f1daec63271d1d5e939b1d5821d0140e))
+
 ## [0.2.2](https://github.com/ljredmond9/DockSwitch/compare/v0.2.1...v0.2.2) (2026-02-20)
 
 
