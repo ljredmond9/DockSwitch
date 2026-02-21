@@ -2,7 +2,7 @@
 
 ## Project Goal
 
-A lightweight macOS daemon that automatically switches Bluetooth peripherals between two Macs based on USB device connect/disconnect events (e.g., docking/undocking from a display or Thunderbolt dock).
+A lightweight macOS daemon that automatically connects/disconnects Bluetooth peripherals based on USB device connect/disconnect events (e.g., docking/undocking from a display or Thunderbolt dock).
 
 ## Problem Background
 
@@ -23,9 +23,8 @@ Remove pairing records for each peripheral via `IOBluetoothDevice.remove()`.
 
 ### On USB device connect (this Mac is gaining the peripherals):
 For each peripheral:
-1. Remove stale pairing record (`IOBluetoothDevice.remove()`)
-2. Pair (`IOBluetoothDevicePair.start()`)
-3. Connect with retries (`IOBluetoothDevice.openConnection()`)
+1. Pair (`IOBluetoothDevicePair.start()`)
+2. Connect with retries (`IOBluetoothDevice.openConnection()`)
 
 A retry loop on the connect side is advisable to handle the case where the peripheral hasn't fully entered advertising mode yet.
 
