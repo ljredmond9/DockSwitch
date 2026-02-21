@@ -10,33 +10,33 @@ struct DockSwitch {
         }
 
         let config = Config.load()
-        log("dockswitchd v\(version) starting (vendor=0x\(String(config.dockVendorID, radix: 16)), product=0x\(String(config.dockProductID, radix: 16)), peripherals=\(config.peripheralMACs))")
+        log("dockswitchd v\(version) starting (vendor=0x\(String(config.usbVendorID, radix: 16)), product=0x\(String(config.usbProductID, radix: 16)), peripherals=\(config.peripheralMACs))")
 
         // Trigger Bluetooth permission prompt early (before any dock events)
         _ = IOBluetoothDevice.pairedDevices()
 
         let switcher = BluetoothSwitcher(peripheralMACs: config.peripheralMACs)
-        let monitor = USBMonitor(vendorID: config.dockVendorID, productID: config.dockProductID)
+        let monitor = USBMonitor(vendorID: config.usbVendorID, productID: config.usbProductID)
 
-        monitor.onDockConnected = {
-            log("Display connected — pairing peripherals")
+        monitor.onDeviceConnected = {
+            log("USB device connected — pairing peripherals")
             DispatchQueue.global(qos: .userInitiated).async {
                 switcher.pairAndConnect()
             }
         }
 
-        monitor.onDockDisconnected = {
-            log("Display disconnected — unpairing peripherals")
+        monitor.onDeviceDisconnected = {
+            log("USB device disconnected — unpairing peripherals")
             DispatchQueue.global(qos: .userInitiated).async {
                 switcher.unpair()
             }
         }
 
         // Check initial state
-        if monitor.isDockConnected() {
-            log("Display is already connected at launch")
+        if monitor.isDeviceConnected() {
+            log("USB trigger device is already connected at launch")
         } else {
-            log("Display is not connected at launch")
+            log("USB trigger device is not connected at launch")
         }
 
         monitor.start()

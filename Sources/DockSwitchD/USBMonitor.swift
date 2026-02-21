@@ -9,8 +9,8 @@ final class USBMonitor: @unchecked Sendable {
     private var matchIterator: io_iterator_t = 0
     private var removeIterator: io_iterator_t = 0
 
-    var onDockConnected: (() -> Void)?
-    var onDockDisconnected: (() -> Void)?
+    var onDeviceConnected: (() -> Void)?
+    var onDeviceDisconnected: (() -> Void)?
 
     init(vendorID: Int, productID: Int) {
         self.vendorID = vendorID
@@ -63,8 +63,8 @@ final class USBMonitor: @unchecked Sendable {
         log("USB monitor started — watching for vendor=0x\(String(vendorID, radix: 16)) product=0x\(String(productID, radix: 16))")
     }
 
-    /// Check if the dock is currently connected.
-    func isDockConnected() -> Bool {
+    /// Check if the USB trigger device is currently connected.
+    func isDeviceConnected() -> Bool {
         let matchingDict = IOServiceMatching("IOUSBHostDevice") as NSMutableDictionary
         matchingDict["idVendor"] = vendorID
         matchingDict["idProduct"] = productID
@@ -105,8 +105,8 @@ private func deviceAttached(refcon: UnsafeMutableRawPointer?, iterator: io_itera
     }
 
     guard count > 0 else { return }
-    log("Dock connected (\(count) USB interface(s))")
-    monitor.onDockConnected?()
+    log("USB device connected (\(count) USB interface(s))")
+    monitor.onDeviceConnected?()
 }
 
 private func deviceRemoved(refcon: UnsafeMutableRawPointer?, iterator: io_iterator_t) {
@@ -120,6 +120,6 @@ private func deviceRemoved(refcon: UnsafeMutableRawPointer?, iterator: io_iterat
     }
 
     guard count > 0 else { return }
-    log("Dock disconnected (\(count) USB interface(s))")
-    monitor.onDockDisconnected?()
+    log("USB device disconnected (\(count) USB interface(s))")
+    monitor.onDeviceDisconnected?()
 }

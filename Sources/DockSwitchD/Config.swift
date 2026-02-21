@@ -1,8 +1,8 @@
 import Foundation
 
 struct Config {
-    let dockVendorID: Int
-    let dockProductID: Int
+    let usbVendorID: Int
+    let usbProductID: Int
     let peripheralMACs: [String]
 
     static let plistPath: String = {
@@ -19,19 +19,19 @@ struct Config {
             fatalError("Failed to read config plist at \(plistPath).")
         }
 
-        guard let vendorID = dict["dockVendorID"] as? Int else {
-            fatalError("Missing 'dockVendorID' in config plist.")
+        guard let vendorID = dict["usbVendorID"] as? Int else {
+            fatalError("Missing 'usbVendorID' in config plist.")
         }
-        guard let productID = dict["dockProductID"] as? Int else {
-            fatalError("Missing 'dockProductID' in config plist.")
+        guard let productID = dict["usbProductID"] as? Int else {
+            fatalError("Missing 'usbProductID' in config plist.")
         }
         guard let macs = dict["peripheralMACs"] as? [String], !macs.isEmpty else {
             fatalError("Missing or empty 'peripheralMACs' in config plist.")
         }
 
         return Config(
-            dockVendorID: vendorID,
-            dockProductID: productID,
+            usbVendorID: vendorID,
+            usbProductID: productID,
             peripheralMACs: macs
         )
     }

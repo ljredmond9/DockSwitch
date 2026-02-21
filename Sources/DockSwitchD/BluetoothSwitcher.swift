@@ -16,7 +16,7 @@ struct BluetoothSwitcher {
         self.retryDelay = retryDelay
     }
 
-    /// Display connected — this Mac is gaining the peripherals.
+    /// USB device connected — this Mac is gaining the peripherals.
     /// Skip devices already connected; pair and then connect with retries for the rest.
     func pairAndConnect() {
         for mac in peripheralMACs {
@@ -45,7 +45,7 @@ struct BluetoothSwitcher {
         }
     }
 
-    /// Display disconnected — this Mac is losing the peripherals.
+    /// USB device disconnected — this Mac is losing the peripherals.
     /// Unpair so peripherals enter advertising mode for the other Mac.
     func unpair() {
         for mac in peripheralMACs {
