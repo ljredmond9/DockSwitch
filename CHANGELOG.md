@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/ljredmond9/DockSwitch/compare/v0.3.0...v0.4.0) (2026-02-21)
+
+
+### Features
+
+* add CLI, rename daemon to dockswitchd ([4b1a737](https://github.com/ljredmond9/DockSwitch/commit/4b1a737af43501d847e8870978819f05063a4ca4))
+
 ## [0.3.0](https://github.com/ljredmond9/DockSwitch/compare/v0.2.4...v0.3.0) (2026-02-21)
 
 
