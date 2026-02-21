@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.2](https://github.com/ljredmond9/DockSwitch/compare/v0.4.1...v0.4.2) (2026-02-21)
+
+
+### Bug Fixes
+
+* avoid fromJSON eval when no release PR exists ([#17](https://github.com/ljredmond9/DockSwitch/issues/17)) ([374b16f](https://github.com/ljredmond9/DockSwitch/commit/374b16ffc565e20ac342167ad886a2dacfe5eb5e))
+
 ## [0.4.1](https://github.com/ljredmond9/DockSwitch/compare/v0.4.0...v0.4.1) (2026-02-21)
 
 
