@@ -31,8 +31,9 @@ jobs:
         if: steps.release.outputs.pr
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ fromJSON(steps.release.outputs.pr).number }}
         run: |
-          gh pr checkout ${{ steps.release.outputs.pr.number }}
+          gh pr checkout "$PR_NUMBER"
           cargo generate-lockfile --manifest-path cli/Cargo.toml
           git add cli/Cargo.lock
           git diff --cached --quiet || git commit -m "chore: sync Cargo.lock"
