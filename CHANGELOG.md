@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.3.0](https://github.com/ljredmond9/DockSwitch/compare/v0.2.4...v0.3.0) (2026-02-21)
+
+
+### Features
+
+* replace blueutil with native IOBluetooth framework ([7e5fe6a](https://github.com/ljredmond9/DockSwitch/commit/7e5fe6a218e3d4578d89b16fcb0f43bd08717905))
+
+
+### Bug Fixes
+
+* trigger Bluetooth permission prompt on first launch ([defff25](https://github.com/ljredmond9/DockSwitch/commit/defff253ed44b750dc43c994e57d147e6d4f3974))
+
 ## [0.2.4](https://github.com/ljredmond9/DockSwitch/compare/v0.2.3...v0.2.4) (2026-02-20)
 
 
