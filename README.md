@@ -1,4 +1,4 @@
-# DockSwitch
+# dockswitch
 
 A lightweight tool for macOS that automatically connects/disconnects Bluetooth devices based on USB device connect/disconnect events (e.g., docking/undocking from a display or Thunderbolt dock). Includes a LaunchAgent for detecting USB events and managing Bluetooth devices, and a CLI tool for managing the daemon.
 
@@ -6,14 +6,14 @@ A lightweight tool for macOS that automatically connects/disconnects Bluetooth d
 
 Some Bluetooth peripherals don't support multi-device pairing — they bind to a single host and won't advertise to other devices after a software disconnect. If you dock/undock between two machines, you're stuck manually re-pairing every time.
 
-DockSwitch solves this by watching for a USB device (like a dock or display) and automatically managing Bluetooth pairing records. When the USB device disconnects, pairing records are removed so peripherals enter advertising mode. When it connects, peripherals are paired and connected with retries.
+dockswitch solves this by watching for a USB device (like a dock or display) and automatically managing Bluetooth pairing records. When the USB device disconnects, pairing records are removed so peripherals enter advertising mode. When it connects, peripherals are paired and connected with retries.
 
 No power cycling, no manual re-pairing, no network coordination between machines. Each Mac runs the daemon independently and reacts to its own USB events.
 
 ## Install
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/ljredmond9/DockSwitch/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/ljredmond9/dockswitch/main/install.sh | bash
 ```
 
 The installer downloads both binaries to `~/.local/bin/`, prompts for your USB device IDs and peripheral MAC addresses, sets up a launchd agent, and starts the daemon.
@@ -84,7 +84,7 @@ Prerequisites: Xcode (Swift 6.2+), Rust toolchain, a prior `install.sh` run for 
 ./dev-install.sh    # build both binaries, install, and restart daemon
 ```
 
-Logs are written to `~/Library/Logs/DockSwitch.log`.
+Logs are written to `~/Library/Logs/dockswitch.log`.
 
 ## License
 

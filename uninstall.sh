@@ -5,9 +5,9 @@ DAEMON_PATH="$HOME/.local/bin/dockswitchd"
 CLI_PATH="$HOME/.local/bin/dockswitch"
 CONFIG_PLIST="$HOME/Library/Preferences/com.dockswitch.plist"
 LAUNCHD_PLIST="$HOME/Library/LaunchAgents/com.dockswitch.plist"
-LOG_FILE="$HOME/Library/Logs/DockSwitch.log"
+LOG_FILE="$HOME/Library/Logs/dockswitch.log"
 
-echo "=== DockSwitch Uninstaller ==="
+echo "=== dockswitch uninstaller ==="
 echo ""
 
 # Unload agent
@@ -27,4 +27,4 @@ for FILE in "$LAUNCHD_PLIST" "$CONFIG_PLIST" "$DAEMON_PATH" "$CLI_PATH" "$LOG_FI
 done
 
 echo ""
-echo "=== DockSwitch uninstalled ==="
+echo "=== dockswitch uninstalled ==="

@@ -3,7 +3,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "DockSwitch",
+    name: "dockswitch",
     platforms: [
         .macOS(.v13),
     ],

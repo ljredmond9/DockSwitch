@@ -9,7 +9,7 @@ main() {
 
     # Must be run from repo root
     if [ ! -f "Package.swift" ]; then
-        echo "Error: Must be run from the DockSwitch repo root (Package.swift not found)."
+        echo "Error: Must be run from the dockswitch repo root (Package.swift not found)."
         exit 1
     fi
 
@@ -20,7 +20,7 @@ main() {
         exit 1
     fi
 
-    echo "=== DockSwitch Dev Install ==="
+    echo "=== dockswitch dev install ==="
     echo ""
 
     # Build Swift daemon (universal release binary)
@@ -63,10 +63,10 @@ main() {
     DAEMON_VERSION=$("$DAEMON_PATH" --version 2>/dev/null || echo "unknown")
     CLI_VERSION=$("$CLI_PATH" --version 2>/dev/null || echo "unknown")
     echo ""
-    echo "=== DockSwitch dev build installed and running ==="
+    echo "=== dockswitch dev build installed and running ==="
     echo "Daemon: $DAEMON_VERSION"
     echo "CLI:    $CLI_VERSION"
-    echo "Logs:   ~/Library/Logs/DockSwitch.log"
+    echo "Logs:   ~/Library/Logs/dockswitch.log"
 }
 
 main "$@"

@@ -2,20 +2,20 @@
 set -euo pipefail
 
 main() {
-    local REPO="ljredmond9/DockSwitch"
+    local REPO="ljredmond9/dockswitch"
     local BINARY_DIR="$HOME/.local/bin"
     local DAEMON_PATH="$BINARY_DIR/dockswitchd"
     local CLI_PATH="$BINARY_DIR/dockswitch"
     local CONFIG_PLIST="$HOME/Library/Preferences/com.dockswitch.plist"
     local LAUNCHD_PLIST="$HOME/Library/LaunchAgents/com.dockswitch.plist"
 
-    echo "=== DockSwitch Installer ==="
+    echo "=== dockswitch installer ==="
     echo ""
 
     # Download latest binaries
     mkdir -p "$BINARY_DIR"
 
-    echo "Downloading latest DockSwitch daemon..."
+    echo "Downloading latest dockswitch daemon..."
     local DAEMON_URL="https://github.com/$REPO/releases/latest/download/dockswitchd-macos-universal"
     if ! curl -fSL --progress-bar -o "$DAEMON_PATH" "$DAEMON_URL"; then
         echo "Error: Failed to download daemon from $DAEMON_URL"
@@ -25,7 +25,7 @@ main() {
     chmod +x "$DAEMON_PATH"
     echo "Installed daemon to $DAEMON_PATH"
 
-    echo "Downloading latest DockSwitch CLI..."
+    echo "Downloading latest dockswitch CLI..."
     local CLI_URL="https://github.com/$REPO/releases/latest/download/dockswitch-macos-universal"
     if ! curl -fSL --progress-bar -o "$CLI_PATH" "$CLI_URL"; then
         echo "Error: Failed to download CLI from $CLI_URL"
@@ -146,9 +146,9 @@ PLISTEOF
 	<key>KeepAlive</key>
 	<true/>
 	<key>StandardOutPath</key>
-	<string>$HOME/Library/Logs/DockSwitch.log</string>
+	<string>$HOME/Library/Logs/dockswitch.log</string>
 	<key>StandardErrorPath</key>
-	<string>$HOME/Library/Logs/DockSwitch.log</string>
+	<string>$HOME/Library/Logs/dockswitch.log</string>
 </dict>
 </plist>
 LAUNCHDEOF
@@ -159,7 +159,7 @@ LAUNCHDEOF
     echo "Loaded launchd agent"
 
     echo ""
-    echo "=== DockSwitch installed and running ==="
+    echo "=== dockswitch installed and running ==="
     echo "Manage with: dockswitch status | start | stop | logs"
     echo "To uninstall: dockswitch uninstall"
 }

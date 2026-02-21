@@ -20,7 +20,7 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
         .map_err(|e: io::Error| -> Box<dyn std::error::Error> { e.into() })?;
 
     if status.success() {
-        println!("DockSwitch daemon started.");
+        println!("dockswitch daemon started.");
     } else {
         return Err("Failed to start daemon.".into());
     }

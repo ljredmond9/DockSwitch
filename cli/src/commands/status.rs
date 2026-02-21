@@ -2,7 +2,7 @@ use super::*;
 use std::process::Command;
 
 pub fn run() -> Result<(), Box<dyn std::error::Error>> {
-    println!("DockSwitch Status");
+    println!("dockswitch status");
     println!("─────────────────");
 
     // CLI version

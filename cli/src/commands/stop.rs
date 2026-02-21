@@ -14,7 +14,7 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
         .status()?;
 
     if status.success() {
-        println!("DockSwitch daemon stopped.");
+        println!("dockswitch daemon stopped.");
     } else {
         return Err("Failed to stop daemon.".into());
     }

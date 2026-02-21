@@ -1,4 +1,4 @@
-# DockSwitch — Bluetooth Peripheral Switcher Daemon
+# dockswitch — Bluetooth Peripheral Switcher Daemon
 
 ## Project Goal
 
@@ -73,7 +73,7 @@ The following values need to be configured per-machine (stored in `~/Library/Pre
 
 Install both binaries to `~/.local/bin/`:
 ```bash
-curl -fsSL https://raw.githubusercontent.com/ljredmond9/DockSwitch/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/ljredmond9/dockswitch/main/install.sh | bash
 ```
 
 Day-to-day management:
