@@ -32,7 +32,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh pr checkout ${{ steps.release.outputs.pr }}
+          gh pr checkout ${{ steps.release.outputs.pr.number }}
           cargo generate-lockfile --manifest-path cli/Cargo.toml
           git add cli/Cargo.lock
           git diff --cached --quiet || git commit -m "chore: sync Cargo.lock"
