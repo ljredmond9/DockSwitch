@@ -1,6 +1,6 @@
 # DockSwitch
 
-A lightweight macOS daemon that automatically switches Bluetooth peripherals between two Macs based on USB device connect/disconnect events.
+A lightweight tool for macOS that automatically connects/disconnects Bluetooth devices based on USB device connect/disconnect events (e.g., docking/undocking from a display or Thunderbolt dock). Includes a LaunchAgent for detecting USB events and managing Bluetooth devices, and a CLI tool for managing the daemon.
 
 ## Why
 
@@ -18,7 +18,23 @@ curl -fsSL https://raw.githubusercontent.com/ljredmond9/DockSwitch/main/install.
 
 The installer downloads both binaries to `~/.local/bin/`, prompts for your USB device IDs and peripheral MAC addresses, sets up a launchd agent, and starts the daemon.
 
-After installing, grant Bluetooth permission to the daemon: **System Settings > Privacy & Security > Bluetooth**.
+To find USB device IDs:
+```bash
+ioreg -p IOUSB -l | grep -A5 'idVendor\|idProduct'
+```
+
+To find peripheral MAC addresses:
+```bash
+system_profiler SPBluetoothDataType
+```
+
+If `~/.local/bin/` isn't in your PATH, add it to your shell config:
+
+```bash
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc && source ~/.zshrc
+```
+
+After installing, you should be prompted to approve Bluetooth permissions. You can also grant the permissions in System Settings: **System Settings > Privacy & Security > Bluetooth**.
 
 ## Usage
 
@@ -52,26 +68,6 @@ Stored in `~/Library/Preferences/com.dockswitch.plist` (created by the installer
 | `usbVendorID` | USB vendor ID of the trigger device |
 | `usbProductID` | USB product ID of the trigger device |
 | `peripheralMACs` | Array of Bluetooth MAC addresses to switch |
-
-To find USB device IDs:
-```bash
-ioreg -p IOUSB -l | grep -A5 'idVendor\|idProduct'
-```
-
-To find peripheral MAC addresses:
-```bash
-system_profiler SPBluetoothDataType
-```
-
-## Examples
-
-**Apple Magic Keyboard + Magic Trackpad with Studio Display:**
-- USB trigger: vendor ID `1452`, product ID `4372` (Apple Studio Display)
-- Peripherals: MAC addresses of your Magic Keyboard and Magic Trackpad
-
-**Any BLE peripheral with a Thunderbolt dock:**
-- USB trigger: vendor ID and product ID of your dock (find via `ioreg`)
-- Peripherals: MAC addresses of the Bluetooth devices you want to switch
 
 ## Architecture
 
