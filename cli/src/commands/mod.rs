@@ -11,7 +11,7 @@ use std::path::PathBuf;
 
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
 pub const LAUNCHD_LABEL: &str = "com.dockswitch";
-pub const GITHUB_REPO: &str = "ljredmond9/DockSwitch";
+pub const GITHUB_REPO: &str = "ljredmond9/dockswitch";
 
 pub fn home_dir() -> PathBuf {
     PathBuf::from(std::env::var("HOME").expect("HOME not set"))
@@ -34,11 +34,11 @@ pub fn config_plist_path() -> PathBuf {
 }
 
 pub fn log_file_path() -> PathBuf {
-    home_dir().join("Library/Logs/DockSwitch.log")
+    home_dir().join("Library/Logs/dockswitch.log")
 }
 
 #[derive(Parser)]
-#[command(name = "dockswitch", about = "Manage the DockSwitch daemon", version = VERSION)]
+#[command(name = "dockswitch", about = "Manage the dockswitch daemon", version = VERSION)]
 pub struct Cli {
     #[command(subcommand)]
     pub command: Commands,
@@ -46,19 +46,19 @@ pub struct Cli {
 
 #[derive(Subcommand)]
 pub enum Commands {
-    /// Start the DockSwitch daemon
+    /// Start the dockswitch daemon
     Start,
-    /// Stop the DockSwitch daemon
+    /// Stop the dockswitch daemon
     Stop,
-    /// Restart the DockSwitch daemon
+    /// Restart the dockswitch daemon
     Restart,
     /// Show daemon status and configuration
     Status,
-    /// Tail the DockSwitch log file
+    /// Tail the dockswitch log file
     Logs,
-    /// Update DockSwitch to the latest release
+    /// Update dockswitch to the latest release
     Update,
-    /// Uninstall DockSwitch completely
+    /// Uninstall dockswitch completely
     Uninstall,
 }
 

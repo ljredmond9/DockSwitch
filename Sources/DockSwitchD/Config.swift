@@ -12,7 +12,7 @@ struct Config {
 
     static func load() -> Config {
         guard FileManager.default.fileExists(atPath: plistPath) else {
-            fatalError("Config file not found at \(plistPath). Run install.sh to configure DockSwitch.")
+            fatalError("Config file not found at \(plistPath). Run install.sh to configure dockswitch.")
         }
 
         guard let dict = NSDictionary(contentsOfFile: plistPath) as? [String: Any] else {

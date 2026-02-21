@@ -3,7 +3,7 @@ use std::fs;
 use std::io::{self, Write};
 
 pub fn run() -> Result<(), Box<dyn std::error::Error>> {
-    print!("Uninstall DockSwitch? This will remove all binaries, config, and logs. [y/N] ");
+    print!("Uninstall dockswitch? This will remove all binaries, config, and logs. [y/N] ");
     io::stdout().flush()?;
 
     let mut input = String::new();
@@ -36,7 +36,7 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
         }
     }
 
-    println!("\nDockSwitch uninstalled.");
+    println!("\ndockswitch uninstalled.");
 
     Ok(())
 }
