@@ -31,14 +31,23 @@ A retry loop on the connect side is advisable to handle the case where the perip
 
 ## Architecture
 
-- **Language**: Swift
-- **Deployment**: launchd agent (`~/Library/LaunchAgents/`)
+Two binaries, one repo:
+
+- **`dockswitchd`** — Swift daemon (`Sources/DockSwitchD/`), runs as a launchd agent
+- **`dockswitch`** — Rust CLI (`cli/`), manages the daemon lifecycle
+
+### Daemon (Swift)
 - **USB monitoring**: IOKit `IOServiceAddMatchingNotification` watching for Studio Display vendor/product ID
 - **Bluetooth switching**: IOBluetooth framework directly (no external dependencies)
   - `IOBluetoothDevice.remove()` — private API for removing pairing records
   - `IOBluetoothDevicePair` — public API for pairing
   - `IOBluetoothDevice.openConnection()` — public API for connecting
 - **No network coordination needed**: each Mac reacts independently to its own dock events
+
+### CLI (Rust)
+- Lives in `cli/` with its own `Cargo.toml`
+- Uses `clap` for subcommand parsing, no other external dependencies
+- Shells out to `launchctl` and `curl` for system operations
 
 ## Configuration
 
@@ -48,24 +57,45 @@ The following values need to be configured per-machine (stored in `~/Library/Pre
 - `dockProductID` — Apple Studio Display USB product ID: `0x1114` (4372)
 - `peripheralMACs` — Array of Magic Keyboard / Magic Trackpad MAC addresses
 
+## CLI Commands
+
+| Command | Description |
+|---|---|
+| `dockswitch start` | Start the daemon |
+| `dockswitch stop` | Stop the daemon |
+| `dockswitch restart` | Restart the daemon |
+| `dockswitch status` | Show running/stopped, PID, versions, config |
+| `dockswitch logs` | Tail the log file |
+| `dockswitch update` | Download latest release from GitHub, replace binaries, restart |
+| `dockswitch uninstall` | Stop daemon, remove all files |
+| `dockswitch --version` | Show CLI version |
+
 ## Deployment
 
-Install as a launchd agent so it starts at login and runs in the background:
-
+Install both binaries to `~/.local/bin/`:
 ```bash
-cp com.dockswitch.plist ~/Library/LaunchAgents/
-launchctl load ~/Library/LaunchAgents/com.dockswitch.plist
+curl -fsSL https://raw.githubusercontent.com/ljredmond9/DockSwitch/main/install.sh | bash
 ```
 
-Uninstall:
+Day-to-day management:
 ```bash
-launchctl unload ~/Library/LaunchAgents/com.dockswitch.plist
-rm ~/Library/LaunchAgents/com.dockswitch.plist
+dockswitch start       # start daemon
+dockswitch stop        # stop daemon
+dockswitch status      # check status
+dockswitch logs        # tail logs
+dockswitch update      # update to latest release
+dockswitch uninstall   # remove everything
+```
+
+Dev install (from repo root):
+```bash
+./dev-install.sh       # builds both, installs, restarts daemon
 ```
 
 ## Dependencies
 
-- No external dependencies — uses only system frameworks (IOBluetooth, IOKit, Foundation)
+- **Daemon**: No external dependencies — uses only system frameworks (IOBluetooth, IOKit, Foundation)
+- **CLI**: `clap` crate for argument parsing; shells out to `curl` for updates
 - Bluetooth permission granted to the daemon process (System Settings → Privacy & Security → Bluetooth)
 
 ## Notes

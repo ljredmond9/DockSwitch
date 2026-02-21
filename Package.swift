@@ -9,7 +9,7 @@ let package = Package(
     ],
     targets: [
         .executableTarget(
-            name: "DockSwitch"
+            name: "DockSwitchD"
         ),
     ]
 )

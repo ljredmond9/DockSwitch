@@ -1,0 +1,7 @@
+[package]
+name = "dockswitch"
+version = "0.3.0" # x-release-please-version
+edition = "2021"
+
+[dependencies]
+clap = { version = "4", features = ["derive"] }
