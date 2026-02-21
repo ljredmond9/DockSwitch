@@ -8,7 +8,7 @@ struct BluetoothSwitcher {
 
     init(
         peripheralMACs: [String],
-        maxRetries: Int = 5,
+        maxRetries: Int = 3,
         retryDelay: TimeInterval = 2.0
     ) {
         self.peripheralMACs = peripheralMACs
@@ -17,7 +17,7 @@ struct BluetoothSwitcher {
     }
 
     /// Display connected — this Mac is gaining the peripherals.
-    /// Skip devices already connected; unpair (clear stale record), pair, then connect with retries for the rest.
+    /// Skip devices already connected; pair and then connect with retries for the rest.
     func pairAndConnect() {
         for mac in peripheralMACs {
             if isConnected(mac) {
