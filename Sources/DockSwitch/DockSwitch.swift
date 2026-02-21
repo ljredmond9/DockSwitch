@@ -1,4 +1,5 @@
 import Foundation
+import IOBluetooth
 
 @main
 struct DockSwitch {
@@ -10,6 +11,9 @@ struct DockSwitch {
 
         let config = Config.load()
         log("DockSwitch v\(version) starting (vendor=0x\(String(config.dockVendorID, radix: 16)), product=0x\(String(config.dockProductID, radix: 16)), peripherals=\(config.peripheralMACs))")
+
+        // Trigger Bluetooth permission prompt early (before any dock events)
+        _ = IOBluetoothDevice.pairedDevices()
 
         let switcher = BluetoothSwitcher(peripheralMACs: config.peripheralMACs)
         let monitor = USBMonitor(vendorID: config.dockVendorID, productID: config.dockProductID)
