@@ -12,19 +12,7 @@ main() {
     echo "=== DockSwitch Installer ==="
     echo ""
 
-    # Check prerequisites
-    local BLUEUTIL_PATH="/opt/homebrew/bin/blueutil"
-    if [ ! -x "$BLUEUTIL_PATH" ]; then
-        BLUEUTIL_PATH=$(command -v blueutil 2>/dev/null || true)
-        if [ -z "$BLUEUTIL_PATH" ]; then
-            echo "Error: blueutil not found. Install with: brew install blueutil"
-            exit 1
-        fi
-    fi
-    echo "Found blueutil at $BLUEUTIL_PATH"
-
     # Download latest binary
-    echo ""
     echo "Downloading latest DockSwitch binary..."
     local DOWNLOAD_URL="https://github.com/$REPO/releases/latest/download/$BINARY_NAME"
     mkdir -p "$BINARY_DIR"
@@ -63,8 +51,8 @@ main() {
 
         echo ""
         echo "--- Bluetooth peripherals ---"
-        echo "To find MAC addresses, run:"
-        echo "  $BLUEUTIL_PATH --paired"
+        echo "To find MAC addresses, open System Settings > Bluetooth,"
+        echo "or run: system_profiler SPBluetoothDataType"
         echo ""
 
         local PERIPHERAL_MACS=()
@@ -85,7 +73,6 @@ main() {
         echo "  Vendor ID:    $VENDOR_ID"
         echo "  Product ID:   $PRODUCT_ID"
         echo "  Peripherals:  ${PERIPHERAL_MACS[*]}"
-        echo "  blueutil:     $BLUEUTIL_PATH"
         echo ""
         local CONFIRM
         read -rp "Proceed with install? [Y/n]: " CONFIRM < /dev/tty
@@ -114,8 +101,6 @@ main() {
 	<key>peripheralMACs</key>
 	<array>
 $MACS_XML	</array>
-	<key>bleutilPath</key>
-	<string>$BLUEUTIL_PATH</string>
 </dict>
 </plist>
 PLISTEOF

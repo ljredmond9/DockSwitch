@@ -1,25 +1,23 @@
 import Foundation
+import IOBluetooth
 
 struct BluetoothSwitcher {
-    let bleutilPath: String
     let peripheralMACs: [String]
     let maxRetries: Int
     let retryDelay: TimeInterval
 
     init(
-        bleutilPath: String = "/opt/homebrew/bin/blueutil",
         peripheralMACs: [String],
-        maxRetries: Int = 5,
+        maxRetries: Int = 3,
         retryDelay: TimeInterval = 2.0
     ) {
-        self.bleutilPath = bleutilPath
         self.peripheralMACs = peripheralMACs
         self.maxRetries = maxRetries
         self.retryDelay = retryDelay
     }
 
     /// Display connected — this Mac is gaining the peripherals.
-    /// Skip devices already connected; unpair (clear stale record), pair, then connect with retries for the rest.
+    /// Skip devices already connected; pair and then connect with retries for the rest.
     func pairAndConnect() {
         for mac in peripheralMACs {
             if isConnected(mac) {
@@ -28,15 +26,12 @@ struct BluetoothSwitcher {
             }
 
             log("Pairing \(mac)...")
-            blueutil("--unpair", mac)
-            Thread.sleep(forTimeInterval: 1.0)
-            blueutil("--pair", mac, "0000")
-            Thread.sleep(forTimeInterval: 1.0)
+            
+            pair(mac)
 
             var connected = false
             for attempt in 1...maxRetries {
-                let result = blueutil("--connect", mac)
-                if result == 0 {
+                if connect(mac) {
                     log("Connected \(mac) on attempt \(attempt)")
                     connected = true
                     break
@@ -50,57 +45,108 @@ struct BluetoothSwitcher {
         }
     }
 
-    private func isConnected(_ mac: String) -> Bool {
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: bleutilPath)
-        process.arguments = ["--is-connected", mac]
-
-        let pipe = Pipe()
-        process.standardOutput = pipe
-        process.standardError = pipe
-
-        do {
-            try process.run()
-            process.waitUntilExit()
-        } catch {
-            return false
-        }
-
-        let output = String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-        return output == "1"
-    }
-
     /// Display disconnected — this Mac is losing the peripherals.
     /// Unpair so peripherals enter advertising mode for the other Mac.
     func unpair() {
         for mac in peripheralMACs {
             log("Unpairing \(mac)...")
-            blueutil("--unpair", mac)
+            remove(mac)
         }
     }
 
+    // MARK: - IOBluetooth operations
+
+    private func device(for mac: String) -> IOBluetoothDevice? {
+        guard let device = IOBluetoothDevice(addressString: mac) else {
+            log("ERROR: Could not create IOBluetoothDevice for \(mac)")
+            return nil
+        }
+        return device
+    }
+
+    private func isConnected(_ mac: String) -> Bool {
+        guard let device = device(for: mac) else { return false }
+        let connected = device.isConnected()
+        log("isConnected(\(mac)): \(connected)")
+        return connected
+    }
+
+    /// Remove pairing record (private API — same call blueutil uses internally).
+    /// Forces the peripheral into advertising/pairable mode.
     @discardableResult
-    private func blueutil(_ args: String...) -> Int32 {
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: bleutilPath)
-        process.arguments = args
+    private func remove(_ mac: String) -> Bool {
+        guard let device = device(for: mac) else { return false }
+        let selector = Selector(("remove"))
+        guard device.responds(to: selector) else {
+            log("ERROR: IOBluetoothDevice does not respond to 'remove' — macOS version may be unsupported")
+            return false
+        }
+        device.perform(selector)
+        log("Removed pairing for \(mac)")
+        return true
+    }
 
-        let pipe = Pipe()
-        process.standardOutput = pipe
-        process.standardError = pipe
+    private func pair(_ mac: String) {
+        guard let device = device(for: mac) else { return }
+        let pairDelegate = PairDelegate(mac: mac)
+        guard let pair = IOBluetoothDevicePair(device: device) else {
+            log("ERROR: Could not create IOBluetoothDevicePair for \(mac)")
+            return
+        }
+        pair.delegate = pairDelegate
 
-        do {
-            try process.run()
-            process.waitUntilExit()
-        } catch {
-            log("ERROR: Failed to run blueutil: \(error)")
-            return -1
+        let result = pair.start()
+        if result != kIOReturnSuccess {
+            log("ERROR: Pair start failed for \(mac): \(result)")
+            return
         }
 
-        let output = String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-        let status = process.terminationStatus
-        log("blueutil \(args.joined(separator: " ")): exit=\(status)\(output.isEmpty ? "" : " output=\(output)")")
+        // Wait for pairing to complete (delegate sets the semaphore)
+        pairDelegate.wait()
+    }
 
-        return process.terminationStatus
+    @discardableResult
+    private func connect(_ mac: String) -> Bool {
+        guard let device = device(for: mac) else { return false }
+        let result = device.openConnection()
+        let success = result == kIOReturnSuccess
+        log("openConnection(\(mac)): \(success ? "success" : "failed (\(result))")")
+        return success
+    }
+}
+
+/// Delegate to handle IOBluetoothDevicePair callbacks synchronously.
+private final class PairDelegate: NSObject, IOBluetoothDevicePairDelegate {
+    let mac: String
+    private let semaphore = DispatchSemaphore(value: 0)
+
+    init(mac: String) {
+        self.mac = mac
+    }
+
+    func wait() {
+        _ = semaphore.wait(timeout: .now() + 15)
+    }
+
+    func devicePairingFinished(_ sender: Any?, error: IOReturn) {
+        if error == kIOReturnSuccess {
+            log("Pairing completed for \(mac)")
+        } else {
+            log("ERROR: Pairing failed for \(mac): \(error)")
+        }
+        semaphore.signal()
+    }
+
+    func devicePairingPINCodeRequest(_ sender: Any?) {
+        log("PIN requested for \(mac) — providing 0000")
+        guard let pair = sender as? IOBluetoothDevicePair else { return }
+        var pin = BluetoothPINCode()
+        let pinBytes: [UInt8] = [0x30, 0x30, 0x30, 0x30] // "0000" in ASCII
+        withUnsafeMutableBytes(of: &pin.data) { buffer in
+            for (i, byte) in pinBytes.enumerated() {
+                buffer[i] = byte
+            }
+        }
+        pair.replyPINCode(4, pinCode: &pin)
     }
 }
