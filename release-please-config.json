@@ -5,7 +5,12 @@
       "extra-files": [
         {
           "type": "generic",
-          "path": "Sources/DockSwitch/Version.swift",
+          "path": "Sources/DockSwitchD/Version.swift",
+          "glob": false
+        },
+        {
+          "type": "generic",
+          "path": "cli/Cargo.toml",
           "glob": false
         }
       ]

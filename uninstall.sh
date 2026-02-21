@@ -1,7 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
-BINARY_PATH="$HOME/.local/bin/dockswitch"
+DAEMON_PATH="$HOME/.local/bin/dockswitchd"
+CLI_PATH="$HOME/.local/bin/dockswitch"
 CONFIG_PLIST="$HOME/Library/Preferences/com.dockswitch.plist"
 LAUNCHD_PLIST="$HOME/Library/LaunchAgents/com.dockswitch.plist"
 LOG_FILE="$HOME/Library/Logs/DockSwitch.log"
@@ -18,7 +19,7 @@ else
 fi
 
 # Remove files
-for FILE in "$LAUNCHD_PLIST" "$CONFIG_PLIST" "$BINARY_PATH" "$LOG_FILE"; do
+for FILE in "$LAUNCHD_PLIST" "$CONFIG_PLIST" "$DAEMON_PATH" "$CLI_PATH" "$LOG_FILE"; do
     if [ -f "$FILE" ]; then
         rm "$FILE"
         echo "Removed $FILE"

@@ -5,12 +5,12 @@ import IOBluetooth
 struct DockSwitch {
     static func main() {
         if CommandLine.arguments.contains("--version") {
-            print("DockSwitch \(version)")
+            print("dockswitchd \(version)")
             return
         }
 
         let config = Config.load()
-        log("DockSwitch v\(version) starting (vendor=0x\(String(config.dockVendorID, radix: 16)), product=0x\(String(config.dockProductID, radix: 16)), peripherals=\(config.peripheralMACs))")
+        log("dockswitchd v\(version) starting (vendor=0x\(String(config.dockVendorID, radix: 16)), product=0x\(String(config.dockProductID, radix: 16)), peripherals=\(config.peripheralMACs))")
 
         // Trigger Bluetooth permission prompt early (before any dock events)
         _ = IOBluetoothDevice.pairedDevices()
