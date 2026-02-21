@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/ljredmond9/DockSwitch/compare/v0.5.0...v0.6.0) (2026-02-21)
+
+
+### Features
+
+* sign release binaries with Developer ID certificate ([#22](https://github.com/ljredmond9/DockSwitch/issues/22)) ([a5e533d](https://github.com/ljredmond9/DockSwitch/commit/a5e533d24be960910f25a477da0d787cf6f749fc))
+
 ## [0.5.0](https://github.com/ljredmond9/DockSwitch/compare/v0.4.2...v0.5.0) (2026-02-21)
 
 
