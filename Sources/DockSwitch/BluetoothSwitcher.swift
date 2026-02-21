@@ -28,7 +28,6 @@ struct BluetoothSwitcher {
             log("Pairing \(mac)...")
             
             pair(mac)
-            Thread.sleep(forTimeInterval: 1.0)
 
             var connected = false
             for attempt in 1...maxRetries {
