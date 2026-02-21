@@ -47,19 +47,23 @@ main() {
         echo "Existing config found at $CONFIG_PLIST — keeping it."
     else
         echo ""
-        echo "--- Host device (dock/display) ---"
+        echo "--- USB trigger device ---"
         echo "To find your device IDs, run:"
         echo "  ioreg -p IOUSB -l | grep -A5 'idVendor\\|idProduct'"
         echo ""
-        echo "Apple Studio Display defaults: vendorID=1452 productID=4372"
-        echo ""
 
         local VENDOR_ID PRODUCT_ID
-        read -rp "Dock vendor ID [1452]: " VENDOR_ID < /dev/tty
-        VENDOR_ID="${VENDOR_ID:-1452}"
+        read -rp "USB vendor ID: " VENDOR_ID < /dev/tty
+        if [ -z "$VENDOR_ID" ]; then
+            echo "Error: USB vendor ID is required."
+            exit 1
+        fi
 
-        read -rp "Dock product ID [4372]: " PRODUCT_ID < /dev/tty
-        PRODUCT_ID="${PRODUCT_ID:-4372}"
+        read -rp "USB product ID: " PRODUCT_ID < /dev/tty
+        if [ -z "$PRODUCT_ID" ]; then
+            echo "Error: USB product ID is required."
+            exit 1
+        fi
 
         echo ""
         echo "--- Bluetooth peripherals ---"
@@ -106,9 +110,9 @@ main() {
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>dockVendorID</key>
+	<key>usbVendorID</key>
 	<integer>$VENDOR_ID</integer>
-	<key>dockProductID</key>
+	<key>usbProductID</key>
 	<integer>$PRODUCT_ID</integer>
 	<key>peripheralMACs</key>
 	<array>
