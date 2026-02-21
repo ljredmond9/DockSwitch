@@ -11,16 +11,7 @@ struct DockSwitch {
         let config = Config.load()
         log("DockSwitch v\(version) starting (vendor=0x\(String(config.dockVendorID, radix: 16)), product=0x\(String(config.dockProductID, radix: 16)), peripherals=\(config.peripheralMACs))")
 
-        // Trigger Bluetooth TCC prompt on first launch by running a harmless blueutil command
-        let preflight = Process()
-        preflight.executableURL = URL(fileURLWithPath: config.bleutilPath)
-        preflight.arguments = ["--power"]
-        preflight.standardOutput = FileHandle.nullDevice
-        preflight.standardError = FileHandle.nullDevice
-        try? preflight.run()
-        preflight.waitUntilExit()
-
-        let switcher = BluetoothSwitcher(bleutilPath: config.bleutilPath, peripheralMACs: config.peripheralMACs)
+        let switcher = BluetoothSwitcher(peripheralMACs: config.peripheralMACs)
         let monitor = USBMonitor(vendorID: config.dockVendorID, productID: config.dockProductID)
 
         monitor.onDockConnected = {

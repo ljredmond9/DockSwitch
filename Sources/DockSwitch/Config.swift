@@ -4,7 +4,6 @@ struct Config {
     let dockVendorID: Int
     let dockProductID: Int
     let peripheralMACs: [String]
-    let bleutilPath: String
 
     static let plistPath: String = {
         let home = FileManager.default.homeDirectoryForCurrentUser.path
@@ -30,13 +29,10 @@ struct Config {
             fatalError("Missing or empty 'peripheralMACs' in config plist.")
         }
 
-        let bleutilPath = dict["bleutilPath"] as? String ?? "/opt/homebrew/bin/blueutil"
-
         return Config(
             dockVendorID: vendorID,
             dockProductID: productID,
-            peripheralMACs: macs,
-            bleutilPath: bleutilPath
+            peripheralMACs: macs
         )
     }
 }
