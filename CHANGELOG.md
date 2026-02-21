@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/ljredmond9/DockSwitch/compare/v0.4.2...v0.5.0) (2026-02-21)
+
+
+### Features
+
+* generalize naming ([#19](https://github.com/ljredmond9/DockSwitch/issues/19)) ([16e0a58](https://github.com/ljredmond9/DockSwitch/commit/16e0a5807e1b822eef224bef641f73af930c0c17))
+
 ## [0.4.2](https://github.com/ljredmond9/DockSwitch/compare/v0.4.1...v0.4.2) (2026-02-21)
 
 
