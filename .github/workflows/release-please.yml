@@ -12,9 +12,6 @@ permissions:
 jobs:
   release-please:
     runs-on: ubuntu-latest
-    outputs:
-      release_created: ${{ steps.release.outputs.release_created }}
-      tag_name: ${{ steps.release.outputs.tag_name }}
     steps:
       - uses: googleapis/release-please-action@v4
         id: release
@@ -41,66 +38,3 @@ jobs:
           git add cli/Cargo.lock
           git diff --cached --quiet || git commit -m "chore: sync Cargo.lock"
           git push
-
-  build:
-    needs: release-please
-    if: needs.release-please.outputs.release_created == 'true'
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: swift-actions/setup-swift@v2
-        with:
-          swift-version: '6.2'
-
-      - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: aarch64-apple-darwin,x86_64-apple-darwin
-
-      - name: Set up code signing
-        env:
-          DEVELOPER_ID_CERT_BASE64: ${{ secrets.DEVELOPER_ID_CERT_BASE64 }}
-          DEVELOPER_ID_CERT_PASSWORD: ${{ secrets.DEVELOPER_ID_CERT_PASSWORD }}
-        run: |
-          KEYCHAIN_PATH=$RUNNER_TEMP/build.keychain-db
-          CERT_PATH=$RUNNER_TEMP/certificate.p12
-          echo "$DEVELOPER_ID_CERT_BASE64" | base64 --decode -o "$CERT_PATH"
-          security create-keychain -p "" "$KEYCHAIN_PATH"
-          security set-keychain-settings "$KEYCHAIN_PATH"
-          security unlock-keychain -p "" "$KEYCHAIN_PATH"
-          security import "$CERT_PATH" -k "$KEYCHAIN_PATH" -P "$DEVELOPER_ID_CERT_PASSWORD" -T /usr/bin/codesign
-          security set-key-partition-list -S apple-tool:,apple: -k "" "$KEYCHAIN_PATH"
-          security list-keychains -d user -s "$KEYCHAIN_PATH" login.keychain-db
-
-      - name: Build Swift daemon (universal)
-        run: swift build -c release --arch arm64 --arch x86_64
-
-      - name: Prepare and sign daemon
-        run: |
-          cp "$(swift build -c release --show-bin-path --arch arm64 --arch x86_64)/DockSwitchD" dockswitchd-macos-universal
-          chmod +x dockswitchd-macos-universal
-          codesign --sign "Developer ID Application" --identifier com.dockswitch.daemon --entitlements entitlements.plist --force dockswitchd-macos-universal
-
-      - name: Build Rust CLI (aarch64)
-        run: cargo build --release --target aarch64-apple-darwin --manifest-path cli/Cargo.toml
-
-      - name: Build Rust CLI (x86_64)
-        run: cargo build --release --target x86_64-apple-darwin --manifest-path cli/Cargo.toml
-
-      - name: Create universal CLI binary
-        run: |
-          lipo -create \
-            cli/target/aarch64-apple-darwin/release/dockswitch \
-            cli/target/x86_64-apple-darwin/release/dockswitch \
-            -output dockswitch-macos-universal
-          chmod +x dockswitch-macos-universal
-
-      - name: Upload to release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release upload "${{ needs.release-please.outputs.tag_name }}" dockswitchd-macos-universal dockswitch-macos-universal
-
-      - name: Clean up keychain
-        if: always()
-        run: security delete-keychain $RUNNER_TEMP/build.keychain-db
