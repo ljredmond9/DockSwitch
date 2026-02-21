@@ -26,8 +26,7 @@ struct BluetoothSwitcher {
             }
 
             log("Pairing \(mac)...")
-            // remove(mac)
-            // Thread.sleep(forTimeInterval: 1.0)
+            
             pair(mac)
             Thread.sleep(forTimeInterval: 1.0)
 
