@@ -68,7 +68,7 @@ Two binaries, one repo:
 Prerequisites: Xcode (Swift 6.2+), Rust toolchain, a prior `install.sh` run for config/launchd setup.
 
 ```bash
-./dev-install.sh    # build both binaries, install, restart daemon
+./dev-install.sh    # build both binaries, install, and restart daemon
 ```
 
 Logs are written to `~/Library/Logs/DockSwitch.log`.
