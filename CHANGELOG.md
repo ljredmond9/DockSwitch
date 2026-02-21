@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.4.1](https://github.com/ljredmond9/DockSwitch/compare/v0.4.0...v0.4.1) (2026-02-21)
+
+
+### Bug Fixes
+
+* get pr number correctly ([#14](https://github.com/ljredmond9/DockSwitch/issues/14)) ([10f6e40](https://github.com/ljredmond9/DockSwitch/commit/10f6e4019100b61e1fbc726c78f9b929702f246f))
+* parse PR number from release-please JSON output ([#15](https://github.com/ljredmond9/DockSwitch/issues/15)) ([e9addbc](https://github.com/ljredmond9/DockSwitch/commit/e9addbcef1935f99e8dc508f0d73a04d08860efd))
+* set git identity for Cargo.lock sync step ([#16](https://github.com/ljredmond9/DockSwitch/issues/16)) ([fb08c4b](https://github.com/ljredmond9/DockSwitch/commit/fb08c4b7c901dfe0590acc6b8a2349326cb0094f))
+* update readme to test new workflow ([#12](https://github.com/ljredmond9/DockSwitch/issues/12)) ([d9b0b7f](https://github.com/ljredmond9/DockSwitch/commit/d9b0b7f0a3ce23c1719e9feb83fb24b6c1f00445))
+
 ## [0.4.0](https://github.com/ljredmond9/DockSwitch/compare/v0.3.0...v0.4.0) (2026-02-21)
 
 
