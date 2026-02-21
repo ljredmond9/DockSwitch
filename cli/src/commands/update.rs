@@ -9,9 +9,7 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
     let output = Command::new("curl")
         .args([
             "-fsSL",
-            &format!(
-                "https://api.github.com/repos/{GITHUB_REPO}/releases/latest"
-            ),
+            &format!("https://api.github.com/repos/{GITHUB_REPO}/releases/latest"),
         ])
         .output()?;
 

@@ -36,7 +36,11 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
             let text = String::from_utf8_lossy(&o.stdout);
             for line in text.lines() {
                 if line.contains("PID") {
-                    if let Some(pid) = line.split('=').nth(1).or_else(|| line.split_whitespace().last()) {
+                    if let Some(pid) = line
+                        .split('=')
+                        .nth(1)
+                        .or_else(|| line.split_whitespace().last())
+                    {
                         println!("PID:            {}", pid.trim().trim_matches(';'));
                     }
                 }
