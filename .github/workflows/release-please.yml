@@ -21,6 +21,23 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - uses: actions/checkout@v4
+        if: steps.release.outputs.pr
+
+      - uses: dtolnay/rust-toolchain@stable
+        if: steps.release.outputs.pr
+
+      - name: Sync Cargo.lock on release PR
+        if: steps.release.outputs.pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr checkout ${{ steps.release.outputs.pr }}
+          cargo generate-lockfile --manifest-path cli/Cargo.toml
+          git add cli/Cargo.lock
+          git diff --cached --quiet || git commit -m "chore: sync Cargo.lock"
+          git push
+
   build:
     needs: release-please
     if: needs.release-please.outputs.release_created == 'true'
