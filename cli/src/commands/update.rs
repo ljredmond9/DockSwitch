@@ -11,19 +11,17 @@ fn parse_release_tag(body: &str) -> Option<&str> {
         .and_then(|s| s.split('"').nth(1))
 }
 
-fn download_release_binary(name: &str, dest: &Path, tag: &str) -> Result<(), Box<dyn std::error::Error>> {
+fn download_release_binary(
+    name: &str,
+    dest: &Path,
+    tag: &str,
+) -> Result<(), Box<dyn std::error::Error>> {
     let url = format!("https://github.com/{GITHUB_REPO}/releases/download/{tag}/{name}");
 
     println!("Downloading {name}...");
 
     let status = Command::new("curl")
-        .args([
-            "-fSL",
-            "--progress-bar",
-            "-o",
-            dest.to_str().unwrap(),
-            &url,
-        ])
+        .args(["-fSL", "--progress-bar", "-o", dest.to_str().unwrap(), &url])
         .status()?;
 
     if status.success() {
@@ -50,8 +48,8 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
 
     let body = String::from_utf8_lossy(&output.stdout);
 
-    let tag = parse_release_tag(&body)
-        .ok_or("Failed to parse release tag from GitHub API response.")?;
+    let tag =
+        parse_release_tag(&body).ok_or("Failed to parse release tag from GitHub API response.")?;
 
     let latest_version = tag.trim_start_matches('v');
 

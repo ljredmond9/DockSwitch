@@ -1,5 +1,4 @@
 use super::{is_daemon_loaded, launchd_plist_path};
-use std::io;
 use std::process::Command;
 
 pub fn run() -> Result<(), Box<dyn std::error::Error>> {
@@ -16,8 +15,7 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
 
     let status = Command::new("launchctl")
         .args(["load", plist.to_str().unwrap()])
-        .status()
-        .map_err(|e: io::Error| -> Box<dyn std::error::Error> { e.into() })?;
+        .status()?;
 
     if status.success() {
         println!("dockswitch daemon started.");
