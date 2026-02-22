@@ -1,5 +1,30 @@
 # Changelog
 
+## [1.0.0](https://github.com/ljredmond9/dockswitch/compare/v0.6.0...v1.0.0) (2026-02-22)
+
+dockswitch is a lightweight macOS daemon that automatically switches Bluetooth peripherals
+when you dock or undock from a display or Thunderbolt hub.
+
+It solves a specific problem with peripherals that don't support multi-device pairing (such
+as Apple Magic peripherals): a software disconnect isn't enough — the peripheral immediately
+reconnects to its original host on any input. The correct primitive is removing the pairing
+record, which tells the peripheral it has no host and causes it to enter advertising mode.
+dockswitch does this automatically, triggered by USB connect/disconnect events from your dock.
+
+### What's included
+
+- **`dockswitchd`** — Swift daemon that monitors USB events via IOKit and performs Bluetooth
+  switching via IOBluetooth (no external dependencies)
+- **`dockswitch`** — Rust CLI for managing the daemon (`start`, `stop`, `status`, `logs`,
+  `update`, `uninstall`)
+- Signed universal binaries for Apple Silicon and Intel
+
+### Install
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/ljredmond9/dockswitch/main/install.sh | bash
+```
+
 ## [0.6.0](https://github.com/ljredmond9/dockswitch/compare/v0.5.0...v0.6.0) (2026-02-21)
 
 

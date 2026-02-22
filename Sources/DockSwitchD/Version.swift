@@ -1,1 +1,1 @@
-let version = "0.6.0" // x-release-please-version
+let version = "1.0.0" // x-release-please-version
