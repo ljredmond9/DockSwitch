@@ -1,12 +1,13 @@
 use super::log_file_path;
+use anyhow::{anyhow, bail, Result};
 use std::os::unix::process::CommandExt;
 use std::process::Command;
 
-pub fn run() -> Result<(), Box<dyn std::error::Error>> {
+pub fn run() -> Result<()> {
     let log_path = log_file_path();
 
     if !log_path.exists() {
-        return Err(format!("Log file not found at {}", log_path.display()).into());
+        bail!("Log file not found at {}", log_path.display());
     }
 
     // exec replaces the current process with tail -f
@@ -15,5 +16,5 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
         .exec();
 
     // exec only returns on error
-    Err(format!("Failed to exec tail: {err}").into())
+    Err(anyhow!("Failed to exec tail: {err}"))
 }

@@ -1,8 +1,9 @@
 use super::*;
+use anyhow::Result;
 use std::fs;
 use std::io::{self, Write};
 
-pub fn run() -> Result<(), Box<dyn std::error::Error>> {
+pub fn run() -> Result<()> {
     print!("Uninstall dockswitch? This will remove all binaries, config, and logs. [y/N] ");
     io::stdout().flush()?;
 

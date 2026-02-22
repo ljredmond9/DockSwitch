@@ -1,7 +1,8 @@
 use super::*;
+use anyhow::Result;
 use std::process::Command;
 
-pub fn run() -> Result<(), Box<dyn std::error::Error>> {
+pub fn run() -> Result<()> {
     println!("dockswitch status");
     println!("─────────────────");
 
