@@ -4,4 +4,5 @@ version = "0.6.0" # x-release-please-version
 edition = "2021"
 
 [dependencies]
+anyhow = "1"
 clap = { version = "4", features = ["derive"] }

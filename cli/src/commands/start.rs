@@ -1,11 +1,12 @@
 use super::{is_daemon_loaded, launchd_plist_path};
+use anyhow::{bail, Result};
 use std::process::Command;
 
-pub fn run() -> Result<(), Box<dyn std::error::Error>> {
+pub fn run() -> Result<()> {
     let plist = launchd_plist_path();
 
     if !plist.exists() {
-        return Err("Launchd plist not found. Run install.sh first.".into());
+        bail!("Launchd plist not found. Run install.sh first.");
     }
 
     if is_daemon_loaded() {
@@ -20,7 +21,7 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
     if status.success() {
         println!("dockswitch daemon started.");
     } else {
-        return Err("Failed to start daemon.".into());
+        bail!("Failed to start daemon.");
     }
 
     Ok(())

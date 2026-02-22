@@ -1,7 +1,8 @@
 use super::{is_daemon_loaded, launchd_plist_path};
+use anyhow::{bail, Result};
 use std::process::Command;
 
-pub fn run() -> Result<(), Box<dyn std::error::Error>> {
+pub fn run() -> Result<()> {
     let plist = launchd_plist_path();
 
     if !is_daemon_loaded() {
@@ -16,7 +17,7 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
     if status.success() {
         println!("dockswitch daemon stopped.");
     } else {
-        return Err("Failed to stop daemon.".into());
+        bail!("Failed to stop daemon.");
     }
 
     Ok(())

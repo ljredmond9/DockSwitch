@@ -1,4 +1,5 @@
 use super::*;
+use anyhow::{anyhow, bail, Result};
 use std::fs;
 use std::path::Path;
 use std::process::Command;
@@ -11,11 +12,7 @@ fn parse_release_tag(body: &str) -> Option<&str> {
         .and_then(|s| s.split('"').nth(1))
 }
 
-fn download_release_binary(
-    name: &str,
-    dest: &Path,
-    tag: &str,
-) -> Result<(), Box<dyn std::error::Error>> {
+fn download_release_binary(name: &str, dest: &Path, tag: &str) -> Result<()> {
     let url = format!("https://github.com/{GITHUB_REPO}/releases/download/{tag}/{name}");
 
     println!("Downloading {name}...");
@@ -27,11 +24,11 @@ fn download_release_binary(
     if status.success() {
         Ok(())
     } else {
-        Err(format!("Failed to download {name}.").into())
+        bail!("Failed to download {name}.");
     }
 }
 
-pub fn run() -> Result<(), Box<dyn std::error::Error>> {
+pub fn run() -> Result<()> {
     println!("Checking for updates...");
 
     // Get latest release tag from GitHub API
@@ -43,13 +40,13 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
         .output()?;
 
     if !output.status.success() {
-        return Err("Failed to check GitHub for latest release.".into());
+        bail!("Failed to check GitHub for latest release.");
     }
 
     let body = String::from_utf8_lossy(&output.stdout);
 
-    let tag =
-        parse_release_tag(&body).ok_or("Failed to parse release tag from GitHub API response.")?;
+    let tag = parse_release_tag(&body)
+        .ok_or_else(|| anyhow!("Failed to parse release tag from GitHub API response."))?;
 
     let latest_version = tag.trim_start_matches('v');
 
