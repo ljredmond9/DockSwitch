@@ -1,6 +1,35 @@
 use super::*;
 use std::fs;
+use std::path::Path;
 use std::process::Command;
+
+/// Extract the tag name from a GitHub releases API JSON response body.
+/// Returns `None` if the field is not found.
+fn parse_release_tag(body: &str) -> Option<&str> {
+    body.split("\"tag_name\"")
+        .nth(1)
+        .and_then(|s| s.split('"').nth(1))
+}
+
+fn download_release_binary(
+    name: &str,
+    dest: &Path,
+    tag: &str,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let url = format!("https://github.com/{GITHUB_REPO}/releases/download/{tag}/{name}");
+
+    println!("Downloading {name}...");
+
+    let status = Command::new("curl")
+        .args(["-fSL", "--progress-bar", "-o", dest.to_str().unwrap(), &url])
+        .status()?;
+
+    if status.success() {
+        Ok(())
+    } else {
+        Err(format!("Failed to download {name}.").into())
+    }
+}
 
 pub fn run() -> Result<(), Box<dyn std::error::Error>> {
     println!("Checking for updates...");
@@ -19,12 +48,8 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
 
     let body = String::from_utf8_lossy(&output.stdout);
 
-    // Parse tag_name from JSON (avoid adding serde dependency)
-    let tag = body
-        .split("\"tag_name\"")
-        .nth(1)
-        .and_then(|s| s.split('"').nth(1))
-        .ok_or("Failed to parse release tag from GitHub API response.")?;
+    let tag =
+        parse_release_tag(&body).ok_or("Failed to parse release tag from GitHub API response.")?;
 
     let latest_version = tag.trim_start_matches('v');
 
@@ -41,36 +66,8 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
     let daemon_tmp = tmp_dir.join("dockswitchd");
     let cli_tmp = tmp_dir.join("dockswitch");
 
-    // Download both binaries
-    let base_url = format!("https://github.com/{GITHUB_REPO}/releases/download/{tag}");
-
-    println!("Downloading daemon...");
-    let status = Command::new("curl")
-        .args([
-            "-fSL",
-            "--progress-bar",
-            "-o",
-            daemon_tmp.to_str().unwrap(),
-            &format!("{base_url}/dockswitchd-macos-universal"),
-        ])
-        .status()?;
-    if !status.success() {
-        return Err("Failed to download daemon binary.".into());
-    }
-
-    println!("Downloading CLI...");
-    let status = Command::new("curl")
-        .args([
-            "-fSL",
-            "--progress-bar",
-            "-o",
-            cli_tmp.to_str().unwrap(),
-            &format!("{base_url}/dockswitch-macos-universal"),
-        ])
-        .status()?;
-    if !status.success() {
-        return Err("Failed to download CLI binary.".into());
-    }
+    download_release_binary("dockswitchd-macos-universal", &daemon_tmp, tag)?;
+    download_release_binary("dockswitch-macos-universal", &cli_tmp, tag)?;
 
     // Stop daemon if running
     let was_running = is_daemon_loaded();
@@ -107,4 +104,26 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
     println!("Updated to v{latest_version}.");
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::parse_release_tag;
+
+    #[test]
+    fn test_parses_tag_from_github_response() {
+        let body = r#"{"tag_name":"v1.2.3","name":"Release 1.2.3"}"#;
+        assert_eq!(parse_release_tag(body), Some("v1.2.3"));
+    }
+
+    #[test]
+    fn test_returns_none_for_missing_field() {
+        let body = r#"{"name":"no tag here"}"#;
+        assert_eq!(parse_release_tag(body), None);
+    }
+
+    #[test]
+    fn test_returns_none_for_empty_body() {
+        assert_eq!(parse_release_tag(""), None);
+    }
 }
